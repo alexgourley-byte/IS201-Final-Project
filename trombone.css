@@ -1,0 +1,195 @@
+/* ============================================================
+   trombone.css  —  hand-written stylesheet for the trombone page
+   Identity: warm jazz-club / gig-poster.  Brass + cream on dark.
+   (Written from scratch — no Bootstrap used on this page.)
+   ============================================================ */
+
+/* ---- 1. Page base + CUSTOM BACKGROUND COLOR ---- */
+body {
+  margin: 0;
+  background-color: #1c1814;           /* custom warm near-black background */
+  background-image:
+    radial-gradient(circle at 20% 0%, rgba(212,160,60,0.10), transparent 45%),
+    radial-gradient(circle at 90% 100%, rgba(212,160,60,0.08), transparent 40%);
+  color: #f3e9d6;                       /* font color: warm cream */
+  font-family: "Inter", system-ui, sans-serif;  /* font family: body */
+  line-height: 1.7;
+}
+
+/* ---- 2. Display headings ---- */
+h1, h2, h3 {
+  font-family: "Anton", Impact, sans-serif;  /* font family: poster display */
+  letter-spacing: 0.02em;
+  line-height: 1.05;
+  margin: 0 0 0.5em;
+}
+h1 { font-size: clamp(2.8rem, 9vw, 6rem); color: #f3e9d6; text-transform: uppercase; }
+h2 { font-size: clamp(1.6rem, 5vw, 2.6rem); color: #e9c46a; }  /* font color: brass */
+h3 { font-size: 1.2rem; color: #d4a03c; letter-spacing: 0.06em; text-transform: uppercase; }
+
+a { color: #e9c46a; text-decoration: none; border-bottom: 1px dotted #b8862c; }
+a:hover { color: #fff; border-bottom-color: #fff; }
+
+/* ---- 3. DIV: top navigation bar ---- */
+.tb-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: #14110e;
+  border-bottom: 2px solid #b8862c;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.tb-nav a { border: 0; color: #c9b896; }
+.tb-nav a:hover { color: #e9c46a; }
+
+/* ---- 4. DIV: centered content wrapper ---- */
+.tb-wrap {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 1.25rem 5rem;
+}
+
+/* ---- 5. DIV: hero band ---- */
+.tb-hero {
+  text-align: center;
+  padding: clamp(3rem, 9vw, 6rem) 1rem 2rem;
+}
+.tb-hero .kicker {
+  font-family: "IBM Plex Mono", monospace;
+  color: #d4a03c;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+.tb-hero .sub { color: #c9b896; font-size: 1.2rem; max-width: 40ch; margin: 0.5rem auto 0; }
+
+/* ---- 6. DIV: brass card / panel ---- */
+.panel {
+  background-color: #241e18;
+  border: 1px solid #3a3026;
+  border-left: 4px solid #d4a03c;
+  border-radius: 6px;
+  padding: 1.75rem 2rem;
+  margin: 2rem 0;
+}
+
+/* ---- 7. Trombone image framing ---- */
+.tb-figure { text-align: center; margin: 2.5rem 0; }
+.tb-figure img {
+  max-width: 560px;
+  max-height: 620px;
+  width: auto;
+  height: auto;
+  background: #2b231b;
+  border: 1px solid #3a3026;
+  border-radius: 8px;
+  padding: 1rem;
+}
+.tb-figure figcaption {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78rem;
+  color: #9c8e72;
+  margin-top: 0.6rem;
+}
+
+/* ---- 8. Responsive video wrapper (keeps the embed 16:9) ---- */
+.video-frame {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #3a3026;
+}
+.video-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* ---- 9. Lists ---- */
+ol.journey { counter-reset: step; list-style: none; padding-left: 0; }
+ol.journey > li {
+  position: relative;
+  padding: 0.5rem 0 0.5rem 3rem;
+  margin-bottom: 1rem;
+}
+ol.journey > li::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 0; top: 0.4rem;
+  width: 2rem; height: 2rem;
+  background: #d4a03c;
+  color: #1c1814;
+  font-family: "Anton", sans-serif;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+ol.journey ul { margin: 0.5rem 0 0; color: #c9b896; }
+ol.journey ul li { margin-bottom: 0.3rem; }
+
+/* ---- 10. Tableau embed sizing ---- */
+.tableau-box {
+  margin: 1rem 0;
+  min-height: 480px;
+  background: #241e18;
+  border: 1px solid #3a3026;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+.tableau-box .tableauPlaceholder { width: 100% !important; }
+.tableau-fallback {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78rem;
+  color: #9c8e72;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+/* ---- 11. Back-to-top anchor link ---- */
+.to-top {
+  display: inline-block;
+  margin-top: 2rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ---- 12. Footer ---- */
+.tb-foot {
+  text-align: center;
+  padding: 2rem 1rem;
+  border-top: 2px solid #b8862c;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78rem;
+  color: #9c8e72;
+  letter-spacing: 0.08em;
+}
+
+/* ---- 13. Play-the-game call-to-action ---- */
+.cta-game {
+  display: inline-block;
+  background: #d4a03c;
+  color: #1c1814;
+  font-family: "Anton", sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.85rem 1.6rem;
+  border-radius: 6px;
+  border: 0;
+}
+.cta-game:hover { background: #f0c053; color: #1c1814; }

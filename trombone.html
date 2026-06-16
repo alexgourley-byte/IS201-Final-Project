@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alex &amp; the Trombone</title>
+
+  <!-- Web fonts (the page's own stylesheet is loaded below, no Bootstrap here) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <!-- My from-scratch stylesheet -->
+  <link rel="stylesheet" href="trombone.css" />
+</head>
+
+<body id="top">
+
+  <!-- ============ NAV (back to professional pages + game) ============ -->
+  <div class="tb-nav">
+    <a href="index.html">← Home</a>
+    <a href="resume.html">Résumé</a>
+    <a href="#journey">The Journey</a>
+    <a href="#video">Watch</a>
+    <a href="#data">Data</a>
+    <a href="game.html">Play the Game →</a>
+  </div>
+
+  <!-- ============ HERO ============ -->
+  <header class="tb-hero">
+    <p class="kicker">A Passion Page</p>
+    <h1>Me &amp; the Trombone</h1>
+    <p class="sub">Seven feet of brass tubing, one slide, and zero frets to hide behind. Here's why I love it.</p>
+  </header>
+
+  <div class="tb-wrap">
+
+    <!-- on-page anchor target list (jumps to sections lower on the page) -->
+    <div class="panel">
+      <h3>On this page</h3>
+      <ul>
+        <li><a href="#journey">How I got here</a></li>
+        <li><a href="#why">Why the trombone</a></li>
+        <li><a href="#video">Watch younger me teach Happy Birthday</a></li>
+        <li><a href="#data">The data behind the music</a></li>
+        <li><a href="#game">Test yourself: name that instrument</a></li>
+      </ul>
+    </div>
+
+    <!-- ============ IMAGE (not from Bootstrap) ============ -->
+    <figure class="tb-figure">
+      <!-- Your photo of you playing. File must be named exactly  images/AlexTrombone.jpg
+           (GitHub Pages is case-sensitive). If it's ever missing, the illustration shows instead. -->
+      <img src="images/AlexTrombone.jpg" alt="Alex playing the trombone"
+           onerror="this.onerror=null; this.src='images/trombone.svg';" />
+      <figcaption>Me on the trombone.</figcaption>
+    </figure>
+
+    <!-- ============ JOURNEY: ordered list with nested unordered lists ============ -->
+    <section id="journey">
+      <h2>How I got here</h2>
+      <ol class="journey">
+        <li>
+          <strong>Picked it up in middle school.</strong>
+          <ul>
+            <li>Chose trombone partly because the slide looked the most fun</li>
+            <li>Learned to read bass clef before I could parallel park</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Got good enough to teach.</strong>
+          <ul>
+            <li>Started showing other kids the basics</li>
+            <li>Made the video further down this page at age 11</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Kept it as a lifelong thing.</strong>
+          <ul>
+            <li>Still play for fun and to stay sharp</li>
+            <li>Convinced it's the most underrated instrument in any band</li>
+          </ul>
+        </li>
+      </ol>
+    </section>
+
+    <!-- ============ WHY ============ -->
+    <section id="why" class="panel">
+      <h2>Why the trombone</h2>
+      <p>
+        Most instruments give you keys, valves, or frets — discrete buttons that snap you to the right
+        note. The trombone gives you a slide and a prayer. Pitch is continuous, so your ear has to do
+        the work that a piano's hardware does for you. That's frustrating at first and addictive forever:
+        it's the closest a brass instrument gets to singing.
+      </p>
+    </section>
+
+    <!-- ============ YOUTUBE VIDEO EMBED ============ -->
+    <section id="video">
+      <h2>Younger me, teaching Happy Birthday</h2>
+      <p>Filmed when I was 11. The fundamentals are solid; the confidence is unmatched.</p>
+      <div class="video-frame">
+        <iframe
+          src="https://www.youtube.com/embed/Db4qL44cSxY"
+          title="Teaching Happy Birthday on trombone"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
+    </section>
+
+    <!-- ============ TABLEAU LIVE EMBED ============ -->
+    <section id="data">
+      <h2>The data behind the music</h2>
+      <p>
+        Music is also data. Below is a live, interactive Tableau dashboard tracking how music genres
+        have risen and fallen on the Billboard Hot 100 from 1960 to today — hover over the genre waves
+        to see the biggest artists in each style.
+      </p>
+
+      <!-- ░░░ TABLEAU SWAP ZONE ░░░
+           This default shows a public music dashboard so the page works immediately.
+           To use YOUR OWN viz (recommended — you already built some in class):
+             1. Open your viz on Tableau Public and click "Share" → "Embed Code".
+             2. Replace EVERYTHING between the SWAP ZONE comments with that code.
+           Verify it loads after you publish, before you submit. -->
+      <div class="tableau-box">
+        <div class='tableauPlaceholder' id='vizTrombone' style='position: relative'>
+          <object class='tableauViz' style='display:none;'>
+            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' />
+            <param name='embed_code_version' value='3' />
+            <param name='site_root' value='' />
+            <param name='name' value='EvolutionofMainstreamMusicBillboardHot100&#47;EvolutionofMainstreamMusic' />
+            <param name='tabs' value='no' />
+            <param name='toolbar' value='yes' />
+            <param name='animate_transition' value='yes' />
+            <param name='display_static_image' value='yes' />
+            <param name='display_spinner' value='yes' />
+            <param name='display_overlay' value='yes' />
+            <param name='display_count' value='yes' />
+            <param name='language' value='en-US' />
+          </object>
+        </div>
+        <script type='text/javascript'>
+          var divElement = document.getElementById('vizTrombone');
+          var vizElement = divElement.getElementsByTagName('object')[0];
+          vizElement.style.width = '100%';
+          vizElement.style.height = '650px';
+          var scriptElement = document.createElement('script');
+          scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';
+          vizElement.parentNode.insertBefore(scriptElement, vizElement);
+        </script>
+      </div>
+      <p class="tableau-fallback">Interactive dashboard · if it doesn't appear,
+        <a href="https://public.tableau.com/app/profile/armin.talic/viz/EvolutionofMainstreamMusicBillboardHot100/EvolutionofMainstreamMusic" target="_blank" rel="noopener">view it on Tableau Public</a>.</p>
+      <!-- ░░░ END TABLEAU SWAP ZONE ░░░ -->
+    </section>
+
+    <!-- ============ GAME LINK ============ -->
+    <section id="game" class="panel" style="text-align:center;">
+      <h2>Can you name that instrument?</h2>
+      <p>I built a quick game to go with this page. See how many instruments you can identify by sight.</p>
+      <a class="cta-game" href="game.html">Play the instrument game</a>
+    </section>
+
+    <!-- on-page anchor: jump back to the top -->
+    <a class="to-top" href="#top">↑ Back to top</a>
+
+  </div>
+
+  <footer class="tb-foot">
+    © 2026 ALEX GOURLEY · KEEP PLAYING
+  </footer>
+
+</body>
+</html>

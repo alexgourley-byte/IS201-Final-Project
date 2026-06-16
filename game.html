@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Name That Instrument</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#1c1814; --panel:#241e18; --line:#3a3026;
+    --brass:#d4a03c; --brass-lt:#f0c053; --cream:#f3e9d6; --muted:#9c8e72;
+    --good:#6fbf73; --bad:#d9694f;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; min-height:100vh;
+    background-color:var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(212,160,60,0.10), transparent 45%),
+      radial-gradient(circle at 85% 100%, rgba(212,160,60,0.08), transparent 45%);
+    color:var(--cream); font-family:"Inter",system-ui,sans-serif;
+    display:flex; flex-direction:column; align-items:center;
+    padding:1.25rem;
+  }
+  a{color:var(--brass); text-decoration:none;}
+  a:hover{color:#fff;}
+  .topnav{
+    width:100%; max-width:560px; display:flex; justify-content:space-between;
+    font-family:"IBM Plex Mono",monospace; font-size:0.78rem; letter-spacing:0.1em;
+    text-transform:uppercase; margin-bottom:1.5rem;
+  }
+  h1{font-family:"Anton",sans-serif; text-transform:uppercase; letter-spacing:0.02em;
+     font-size:clamp(2rem,7vw,3rem); margin:0 0 0.25rem; text-align:center;}
+  .tag{color:var(--muted); text-align:center; margin:0 0 1.25rem; font-size:0.95rem;}
+
+  .scorebar{
+    width:100%; max-width:560px; display:flex; gap:0.75rem; margin-bottom:1rem;
+    font-family:"IBM Plex Mono",monospace;
+  }
+  .stat{flex:1; background:var(--panel); border:1px solid var(--line);
+        border-radius:8px; padding:0.6rem; text-align:center;}
+  .stat .num{font-size:1.5rem; color:var(--brass); font-weight:500;}
+  .stat .lbl{font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted);}
+
+  .card{
+    width:100%; max-width:560px; background:var(--panel);
+    border:1px solid var(--line); border-left:4px solid var(--brass);
+    border-radius:12px; padding:1.5rem; text-align:center;
+  }
+  .stage{
+    background:#2b231b; border:1px solid var(--line); border-radius:10px;
+    padding:1rem; margin-bottom:1.25rem;
+  }
+  .stage svg{width:100%; height:200px; display:block;}
+
+  .options{display:grid; grid-template-columns:1fr 1fr; gap:0.75rem;}
+  .opt{
+    font-family:"Inter",sans-serif; font-size:1rem; font-weight:500;
+    color:var(--cream); background:#2b231b; border:1px solid var(--line);
+    border-radius:8px; padding:0.85rem 0.5rem; cursor:pointer;
+    transition:border-color .12s, background .12s, transform .05s;
+  }
+  .opt:hover:not(:disabled){border-color:var(--brass); transform:translateY(-1px);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{background:rgba(111,191,115,0.18); border-color:var(--good); color:#cdeccf;}
+  .opt.wrong{background:rgba(217,105,79,0.16); border-color:var(--bad); color:#f0c9bf;}
+  .opt:focus-visible{outline:2px solid var(--brass-lt); outline-offset:2px;}
+
+  .feedback{min-height:1.5rem; margin:1rem 0 0; font-weight:600;}
+  .feedback.good{color:var(--good);} .feedback.bad{color:var(--bad);}
+
+  .next{
+    margin-top:1rem; font-family:"Anton",sans-serif; text-transform:uppercase;
+    letter-spacing:0.04em; font-size:1rem; background:var(--brass); color:var(--bg);
+    border:0; border-radius:8px; padding:0.8rem 1.6rem; cursor:pointer;
+  }
+  .next:hover{background:var(--brass-lt);}
+  .next[hidden]{display:none;}
+
+  .footnote{color:var(--muted); font-size:0.8rem; margin-top:1.5rem; text-align:center;}
+  @media (max-width:420px){ .options{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+  <div class="topnav">
+    <a href="trombone.html">← Trombone page</a>
+    <a href="index.html">Home</a>
+  </div>
+
+  <h1>Name That Instrument</h1>
+  <p class="tag">A picture flashes. You name it. The trombone is in here somewhere.</p>
+
+  <div class="scorebar">
+    <div class="stat"><div class="num" id="score">0</div><div class="lbl">Correct</div></div>
+    <div class="stat"><div class="num" id="asked">0</div><div class="lbl">Asked</div></div>
+    <div class="stat"><div class="num" id="streak">0</div><div class="lbl">Streak</div></div>
+    <div class="stat"><div class="num" id="best">0</div><div class="lbl">Best</div></div>
+  </div>
+
+  <div class="card">
+    <div class="stage" id="stage"></div>
+    <div class="options" id="options"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next" id="next" hidden>Next instrument →</button>
+  </div>
+
+  <p class="footnote">Built from scratch with a little help from AI · part of Alex Gourley's IS&nbsp;201 project</p>
+
+<script>
+/* ---------- Instrument library (hand-drawn SVGs) ---------- */
+const C = { brass:'#d4a03c', brassD:'#9a6e1c', brassL:'#f3d27a',
+            wood:'#b5703a', woodD:'#7c4a22', woodL:'#d99a5e',
+            cream:'#f3e9d6', dark:'#2a221a', steel:'#cfd3d8', steelD:'#8b9097',
+            black:'#1a1512' };
+
+const INSTRUMENTS = [
+  { name:'Trombone', svg:`
+    <svg viewBox="0 0 200 130">
+      <rect x="14" y="55" width="120" height="6" rx="3" fill="${C.brass}"/>
+      <rect x="14" y="70" width="120" height="6" rx="3" fill="${C.brassD}"/>
+      <path d="M14 55 q-9 0 -9 9 q0 9 9 9 l0 -6 q-4 0 -4 -3 q0 -3 4 -3 z" fill="${C.brassD}"/>
+      <rect x="46" y="58" width="6" height="15" rx="2" fill="${C.brass}"/>
+      <path d="M134 58 q34 0 34 -22 q0 -20 -30 -20" fill="none" stroke="${C.brass}" stroke-width="7" stroke-linecap="round"/>
+      <path d="M138 16 q-70 0 -124 40" fill="none" stroke="${C.brass}" stroke-width="6" stroke-linecap="round"/>
+      <path d="M150 36 q28 -2 40 -26 q4 -8 12 -8 q8 0 8 12 q0 30 -24 46 q-16 10 -28 4 q-12 -6 -10 -22 z" fill="${C.brassL}" stroke="${C.brassD}" stroke-width="1.5"/>
+    </svg>`},
+  { name:'Trumpet', svg:`
+    <svg viewBox="0 0 200 130">
+      <path d="M40 62 q-12 0 -12 6 q0 6 12 6 l0 -4 q-5 0 -5 -2 q0 -2 5 -2 z" fill="${C.brassD}"/>
+      <rect x="40" y="60" width="95" height="10" rx="5" fill="${C.brass}"/>
+      <g fill="${C.brassD}">
+        <rect x="62" y="44" width="8" height="20" rx="3"/>
+        <rect x="80" y="44" width="8" height="20" rx="3"/>
+        <rect x="98" y="44" width="8" height="20" rx="3"/>
+      </g>
+      <g fill="${C.brassL}"><circle cx="66" cy="42" r="6"/><circle cx="84" cy="42" r="6"/><circle cx="102" cy="42" r="6"/></g>
+      <path d="M135 56 q30 -2 40 -22 q4 -8 12 -8 q8 0 8 12 q0 26 -22 40 q-14 9 -26 3 q-12 -6 -10 -20 z" fill="${C.brassL}" stroke="${C.brassD}" stroke-width="1.5"/>
+    </svg>`},
+  { name:'Saxophone', svg:`
+    <svg viewBox="0 0 200 130">
+      <rect x="92" y="10" width="8" height="20" rx="3" fill="${C.dark}"/>
+      <path d="M96 28 q4 26 2 50 q-3 34 -34 40 q-34 6 -42 -22 q-6 -22 16 -26"
+            fill="none" stroke="${C.brass}" stroke-width="13" stroke-linecap="round"/>
+      <path d="M40 110 q-18 -4 -16 -22" fill="none" stroke="${C.brassL}" stroke-width="20" stroke-linecap="round"/>
+      <g fill="${C.brassD}">
+        <circle cx="86" cy="46" r="3.5"/><circle cx="88" cy="60" r="3.5"/>
+        <circle cx="86" cy="74" r="3.5"/><circle cx="80" cy="88" r="3.5"/>
+        <circle cx="70" cy="100" r="3.5"/>
+      </g>
+    </svg>`},
+  { name:'Flute', svg:`
+    <svg viewBox="0 0 200 130">
+      <rect x="16" y="60" width="168" height="11" rx="5.5" fill="${C.steel}" stroke="${C.steelD}" stroke-width="1"/>
+      <circle cx="40" cy="65" r="4.5" fill="${C.dark}"/>
+      <g fill="${C.steelD}">
+        <circle cx="80" cy="65" r="4"/><circle cx="98" cy="65" r="4"/>
+        <circle cx="116" cy="65" r="4"/><circle cx="134" cy="65" r="4"/>
+        <circle cx="152" cy="65" r="4"/>
+      </g>
+      <rect x="16" y="60" width="14" height="11" rx="4" fill="${C.steelD}"/>
+    </svg>`},
+  { name:'Violin', svg:`
+    <svg viewBox="0 0 200 130">
+      <g transform="rotate(-25 100 70)">
+        <path d="M100 18 C80 18 78 40 88 48 C70 52 70 86 90 90 C80 100 84 118 100 118
+                 C116 118 120 100 110 90 C130 86 130 52 112 48 C122 40 120 18 100 18 Z"
+              fill="${C.wood}" stroke="${C.woodD}" stroke-width="2"/>
+        <path d="M82 64 q-3 6 0 12 M118 64 q3 6 0 12" stroke="${C.black}" stroke-width="2.5" fill="none"/>
+        <rect x="97" y="6" width="6" height="20" fill="${C.woodD}"/>
+        <path d="M100 6 q-7 -3 -4 -8" stroke="${C.woodD}" stroke-width="3" fill="none"/>
+        <g stroke="${C.cream}" stroke-width="1"><line x1="96" y1="30" x2="96" y2="110"/><line x1="100" y1="30" x2="100" y2="110"/><line x1="104" y1="30" x2="104" y2="110"/></g>
+      </g>
+    </svg>`},
+  { name:'Guitar', svg:`
+    <svg viewBox="0 0 200 130">
+      <g transform="rotate(-18 100 70)">
+        <path d="M100 50 C82 50 78 68 86 80 C72 86 70 112 92 116 C112 120 130 108 128 90
+                 C126 76 118 74 116 66 C114 58 112 50 100 50 Z"
+              fill="${C.woodL}" stroke="${C.woodD}" stroke-width="2"/>
+        <circle cx="104" cy="86" r="9" fill="${C.dark}"/>
+        <rect x="92" y="6" width="9" height="50" rx="2" fill="${C.woodD}"/>
+        <rect x="90" y="2" width="13" height="10" rx="2" fill="${C.black}"/>
+      </g>
+    </svg>`},
+  { name:'Piano', svg:`
+    <svg viewBox="0 0 200 130">
+      <rect x="20" y="36" width="160" height="58" rx="4" fill="${C.cream}" stroke="${C.steelD}" stroke-width="2"/>
+      <g stroke="${C.steelD}" stroke-width="1.5">
+        <line x1="40" y1="36" x2="40" y2="94"/><line x1="60" y1="36" x2="60" y2="94"/>
+        <line x1="80" y1="36" x2="80" y2="94"/><line x1="100" y1="36" x2="100" y2="94"/>
+        <line x1="120" y1="36" x2="120" y2="94"/><line x1="140" y1="36" x2="140" y2="94"/>
+        <line x1="160" y1="36" x2="160" y2="94"/>
+      </g>
+      <g fill="${C.black}">
+        <rect x="34" y="36" width="12" height="34"/><rect x="54" y="36" width="12" height="34"/>
+        <rect x="94" y="36" width="12" height="34"/><rect x="114" y="36" width="12" height="34"/>
+        <rect x="134" y="36" width="12" height="34"/>
+      </g>
+    </svg>`},
+  { name:'Drums', svg:`
+    <svg viewBox="0 0 200 130">
+      <ellipse cx="100" cy="44" rx="60" ry="16" fill="${C.cream}" stroke="${C.steelD}" stroke-width="2"/>
+      <path d="M40 44 v34 a60 16 0 0 0 120 0 v-34" fill="${C.steel}" stroke="${C.steelD}" stroke-width="2"/>
+      <path d="M40 44 v34 a60 16 0 0 0 120 0 v-34" fill="none" stroke="${C.brass}" stroke-width="0"/>
+      <g stroke="${C.brassD}" stroke-width="3">
+        <line x1="48" y1="50" x2="52" y2="78"/><line x1="100" y1="58" x2="100" y2="86"/><line x1="152" y1="50" x2="148" y2="78"/>
+      </g>
+      <g stroke="${C.cream}" stroke-width="3" stroke-linecap="round">
+        <line x1="70" y1="20" x2="120" y2="40"/><line x1="130" y1="18" x2="86" y2="40"/>
+      </g>
+    </svg>`},
+  { name:'Harp', svg:`
+    <svg viewBox="0 0 200 130">
+      <path d="M60 116 L60 24 Q60 14 72 16 Q150 30 132 116 Z" fill="none" stroke="${C.woodD}" stroke-width="7"/>
+      <rect x="50" y="112" width="86" height="10" rx="3" fill="${C.woodD}"/>
+      <g stroke="${C.brassL}" stroke-width="1.4">
+        <line x1="68" y1="22" x2="68" y2="112"/><line x1="76" y1="24" x2="76" y2="112"/>
+        <line x1="84" y1="27" x2="84" y2="112"/><line x1="92" y1="31" x2="92" y2="112"/>
+        <line x1="100" y1="36" x2="100" y2="112"/><line x1="108" y1="42" x2="108" y2="112"/>
+        <line x1="116" y1="50" x2="116" y2="112"/><line x1="124" y1="62" x2="124" y2="112"/>
+      </g>
+    </svg>`},
+  { name:'Xylophone', svg:`
+    <svg viewBox="0 0 200 130">
+      <g>
+        <rect x="30" y="40" width="18" height="64" rx="3" fill="#e05a5a"/>
+        <rect x="52" y="44" width="18" height="58" rx="3" fill="#e0935a"/>
+        <rect x="74" y="48" width="18" height="52" rx="3" fill="#e0c95a"/>
+        <rect x="96" y="52" width="18" height="46" rx="3" fill="#7bc46a"/>
+        <rect x="118" y="56" width="18" height="40" rx="3" fill="#5aa7e0"/>
+        <rect x="140" y="60" width="18" height="34" rx="3" fill="#8a6ae0"/>
+      </g>
+      <rect x="24" y="38" width="140" height="5" rx="2" fill="${C.woodD}"/>
+      <rect x="24" y="100" width="140" height="5" rx="2" fill="${C.woodD}"/>
+      <g stroke="${C.woodD}" stroke-width="3" stroke-linecap="round">
+        <line x1="150" y1="20" x2="120" y2="58"/><circle cx="150" cy="18" r="5" fill="${C.cream}" stroke="none"/>
+        <line x1="168" y1="24" x2="138" y2="62"/><circle cx="168" cy="22" r="5" fill="${C.cream}" stroke="none"/>
+      </g>
+    </svg>`}
+];
+
+/* ---------- Game logic ---------- */
+const $ = id => document.getElementById(id);
+let score=0, asked=0, streak=0, best=0, answer=null, locked=false;
+
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+function newRound(){
+  locked=false;
+  $('feedback').textContent=''; $('feedback').className='feedback';
+  $('next').hidden=true;
+
+  answer = INSTRUMENTS[Math.random()*INSTRUMENTS.length|0];
+  $('stage').innerHTML = answer.svg;
+
+  const distractors = shuffle(INSTRUMENTS.filter(i=>i.name!==answer.name)).slice(0,3);
+  const choices = shuffle([answer, ...distractors]);
+
+  const box = $('options'); box.innerHTML='';
+  choices.forEach(choice=>{
+    const b=document.createElement('button');
+    b.className='opt'; b.textContent=choice.name;
+    b.onclick=()=>guess(choice, b);
+    box.appendChild(b);
+  });
+}
+
+function guess(choice, btn){
+  if(locked) return;
+  locked=true; asked++;
+  const buttons=[...document.querySelectorAll('.opt')];
+  buttons.forEach(b=>{
+    b.disabled=true;
+    if(b.textContent===answer.name) b.classList.add('correct');
+  });
+  const fb=$('feedback');
+  if(choice.name===answer.name){
+    score++; streak++; best=Math.max(best,streak);
+    fb.textContent='Correct — that\u2019s a '+answer.name.toLowerCase()+'.';
+    fb.className='feedback good';
+  } else {
+    streak=0; btn.classList.add('wrong');
+    fb.textContent='Not quite — that was a '+answer.name.toLowerCase()+'.';
+    fb.className='feedback bad';
+  }
+  $('score').textContent=score; $('asked').textContent=asked;
+  $('streak').textContent=streak; $('best').textContent=best;
+  $('next').hidden=false; $('next').focus();
+}
+
+$('next').onclick=newRound;
+newRound();
+</script>
+</body>
+</html>
